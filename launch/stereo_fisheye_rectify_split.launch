@@ -1,0 +1,12 @@
+<launch>
+    <!-- Launch file for stereo fisheye rectification -->
+    <node pkg="stereo_fisheye_rectify" type="stereo_fr_split" name="stereo_fisheye_rectify" output="screen">
+      <param name="calib_file" value="$(env HOME)/.ros/fisheye_stereo_rectify.yml"/>
+      <param name="img_width" type="int" value="1280"/>
+      <param name="img_height" type="int" value="1024"/>
+      <remap from="~left/image_raw" to="/ovc_node/left/image_raw"/>
+      <remap from="~right/image_raw" to="/ovc_node/right/image_raw"/>
+      <remap from="~left/rectified" to="/sfr/left/image_raw"/>
+      <remap from="~right/rectified" to="/sfr/right/image_raw"/>
+    </node>
+</launch>

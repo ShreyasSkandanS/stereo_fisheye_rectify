@@ -21,3 +21,6 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 add_executable(stereo_fr src/rectify_main.cpp)
 target_link_libraries(stereo_fr ${catkin_LIBRARIES} ${OpenCV_LIBS})
+
+add_executable(stereo_fr_split src/rectify_split_main.cpp)
+target_link_libraries(stereo_fr_split ${catkin_LIBRARIES} ${OpenCV_LIBS})
