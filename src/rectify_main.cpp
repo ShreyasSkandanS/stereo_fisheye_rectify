@@ -23,10 +23,10 @@ void readCalibrationParameters(cv::Mat &K1, cv::Mat &K2, cv::Mat &R,
                                cv::Mat &P2, cv::Vec3d &T,
                                cv::Vec4d &D1, cv::Vec4d &D2, cv::Size &img_size)
 {
-	cv::FileStorage fs(stereo_parameters,cv::FileStorage::READ);
- 	if (!fs.isOpened()) {
-  	ROS_ERROR("Failed to open calibration parameter file.");
-	  exit(1);
+  cv::FileStorage fs(stereo_parameters,cv::FileStorage::READ);
+  if (!fs.isOpened()) {
+    ROS_ERROR("Failed to open calibration parameter file.");
+    exit(1);
   }
   fs["K1"] >> K1;
   fs["K2"] >> K2;
@@ -56,13 +56,13 @@ void publishRectifiedImages(cv::Mat &left_rect, cv::Mat &right_rect, cv_bridge::
 {
   cv_bridge::CvImage out_rect_l;
   cv_bridge::CvImage out_rect_r;
-  out_rect_l.header 	= cv_ptr->header;
-  out_rect_r.header	= cv_ptr->header;
-  out_rect_l.encoding 	= sensor_msgs::image_encodings::MONO8;
-  out_rect_r.encoding 	= sensor_msgs::image_encodings::MONO8;
+  out_rect_l.header   = cv_ptr->header;
+  out_rect_r.header = cv_ptr->header;
+  out_rect_l.encoding   = sensor_msgs::image_encodings::MONO8;
+  out_rect_r.encoding   = sensor_msgs::image_encodings::MONO8;
   cv::Mat r_l_u8, r_r_u8;
   left_rect.convertTo(r_l_u8, CV_8UC1);
-  right_rect.convertTo(r_r_u8, CV_8UC2);
+  right_rect.convertTo(r_r_u8, CV_8UC1);
   out_rect_l.image = r_l_u8;
   out_rect_r.image = r_r_u8;
   rectified_l_publisher.publish(out_rect_l.toImageMsg());
@@ -111,16 +111,16 @@ int main(int argc, char **argv)
   cv::Mat R1, R2, P1, P2, K1, K2, R;
   cv::Size img_size;
 
- 	readCalibrationParameters(K1, K2, R, R1, R2, P1, P2, T, D1, D2, img_size);
+  readCalibrationParameters(K1, K2, R, R1, R2, P1, P2, T, D1, D2, img_size);
 
- 	cv::fisheye::initUndistortRectifyMap(K1, D1, R1, P1, img_size, CV_16SC2, rmap[0][0], rmap[0][1]);
- 	cv::fisheye::initUndistortRectifyMap(K2, D2, R2, P2, img_size, CV_16SC2, rmap[1][0], rmap[1][1]);
+  cv::fisheye::initUndistortRectifyMap(K1, D1, R1, P1, img_size, CV_16SC2, rmap[0][0], rmap[0][1]);
+  cv::fisheye::initUndistortRectifyMap(K2, D2, R2, P2, img_size, CV_16SC2, rmap[1][0], rmap[1][1]);
 
- 	image_transport::ImageTransport it(nh);
+  image_transport::ImageTransport it(nh);
 
   ros::Subscriber image_sub = nh.subscribe("image", 1, &rectifyCallback);
 
- 	rectified_l_publisher	= it.advertise("left/rectified",1);
- 	rectified_r_publisher 	= it.advertise("right/rectified",1);
- 	ros::spin();
+  rectified_l_publisher = it.advertise("left/rectified",1);
+  rectified_r_publisher   = it.advertise("right/rectified",1);
+  ros::spin();
 }
